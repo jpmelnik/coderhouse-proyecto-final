@@ -17,6 +17,6 @@
 
 7. Abrir y Ejecutar "07_TCL_db.sql"
 
-8. Abrir y Ejecutar "09_DCL_db.sql"
+8. Abrir y Ejecutar "08_DCL_db.sql"
 
 9. Abrir y Ejecutar "09_basic_reports_db.sql"
