@@ -1,5 +1,22 @@
 
 # SETUP
 
-1. Ejecutar "scripts-others.sql".
-2. Ejecutar "scripts-permissions.sql".
+# Pasos:
+
+1. Abrir y Ejecutar "01_tables_db.sql"
+
+2. Abrir y Ejecutar "02_insert_db.sql"
+
+3. Abrir y Ejecutar "03_views_db.sql"
+
+4. Abrir y Ejecutar "04_functions_db.sql"
+
+5. Abrir y Ejecutar "05_procedures_db.sql"
+
+6. Abrir y Ejecutar "06_triggers_db.sql"
+
+7. Abrir y Ejecutar "07_TCL_db.sql"
+
+8. Abrir y Ejecutar "09_DCL_db.sql"
+
+9. Abrir y Ejecutar "09_basic_reports_db.sql"

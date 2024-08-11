@@ -1,3 +1,6 @@
+-- Seleccionar la base de datos para usarla
+USE consortium_db;
+
 -- Crear un usuario para el administrador general del sistema
 CREATE USER 'admin_user'@'localhost' IDENTIFIED BY 'secure_password';
 

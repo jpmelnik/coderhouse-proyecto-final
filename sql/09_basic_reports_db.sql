@@ -1,3 +1,6 @@
+-- Seleccionar la base de datos para usarla
+USE consortium_db;
+
 -- Reporte: Detalles de las Unidades por Condominio
 
 SELECT 
