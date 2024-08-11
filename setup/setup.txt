@@ -1,0 +1,5 @@
+
+# SETUP
+
+1. Ejecutar "scripts-others.sql".
+2. Ejecutar "scripts-permissions.sql".
