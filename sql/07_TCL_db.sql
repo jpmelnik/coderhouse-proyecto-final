@@ -1,8 +1,24 @@
 -- Seleccionar la base de datos para usarla
 USE consortium_db;
 
-
+-- #####################################################
 -- Registro de un Nuevo Gasto Común y Actualización del Fondo de Reserva
+-- #####################################################
+
+/**
+ * Transacción: Registro de un Nuevo Gasto Común y Actualización del Fondo de Reserva
+ * 
+ * Descripción:
+ * Esta transacción inserta un nuevo gasto común para un condominio y actualiza el fondo de reserva.
+ * Si el fondo de reserva resulta negativo después de la actualización, la transacción se revierte
+ * para mantener la integridad financiera.
+ * 
+ * Pasos:
+ * - Inserta un nuevo gasto común en la tabla `common_expenses`.
+ * - Actualiza el fondo de reserva del condominio, restando el monto del gasto.
+ * - Verifica si el fondo de reserva es suficiente.
+ * - Si el fondo es negativo, revierte la transacción.
+ */
 
 BEGIN;
 
@@ -30,7 +46,23 @@ ELSE
     COMMIT;
 END IF;
 
+-- #####################################################
 -- Pago de Expensas por Parte de un Propietario
+-- #####################################################
+
+/**
+ * Transacción: Pago de Expensas por Parte de un Propietario
+ * 
+ * Descripción:
+ * Esta transacción registra el pago de una expensa por parte de un propietario y actualiza 
+ * el estado de la expensa a "Pagado". Si la actualización del estado falla, la transacción se revierte.
+ * 
+ * Pasos:
+ * - Inserta un nuevo pago en la tabla `payments`.
+ * - Actualiza el estado de la expensa correspondiente a "Pagado".
+ * - Verifica si la actualización fue exitosa.
+ * - Si la actualización falla, revierte la transacción.
+ */
 
 BEGIN;
 
@@ -52,7 +84,23 @@ ELSE
     COMMIT;
 END IF;
 
+-- #####################################################
 -- Transferencia de Propiedad de una Unidad
+-- #####################################################
+
+/**
+ * Transacción: Transferencia de Propiedad de una Unidad
+ * 
+ * Descripción:
+ * Esta transacción actualiza el propietario de una unidad. Si la actualización falla, 
+ * la transacción se revierte para garantizar que no se realicen cambios parciales.
+ * 
+ * Pasos:
+ * - Actualiza el propietario de la unidad en la tabla `units`.
+ * - Verifica si la actualización fue exitosa.
+ * - Si la actualización falla, revierte la transacción.
+ */
+
 BEGIN;
 
 -- Actualizar el propietario de la unidad
@@ -69,7 +117,23 @@ ELSE
     COMMIT;
 END IF;
 
+-- #####################################################
 -- Registro de una Nueva Reunión y Asignación de Tareas
+-- #####################################################
+
+/**
+ * Transacción: Registro de una Nueva Reunión y Asignación de Tareas
+ * 
+ * Descripción:
+ * Esta transacción registra una nueva reunión del consorcio y asigna tareas a los propietarios.
+ * Si alguna tarea no se asigna correctamente, la transacción se revierte.
+ * 
+ * Pasos:
+ * - Inserta un nuevo registro en la tabla `meetings`.
+ * - Asigna tareas a los propietarios en la tabla `tasks`.
+ * - Verifica si todas las tareas fueron asignadas correctamente.
+ * - Si alguna tarea falla, revierte la transacción.
+ */
 
 BEGIN;
 
@@ -91,7 +155,24 @@ ELSE
     COMMIT;
 END IF;
 
---  Registro de una Queja y Creación de una Violación Relacionada
+-- #####################################################
+-- Registro de una Queja y Creación de una Violación Relacionada
+-- #####################################################
+
+/**
+ * Transacción: Registro de una Queja y Creación de una Violación Relacionada
+ * 
+ * Descripción:
+ * Esta transacción registra una queja presentada por un propietario o inquilino y, 
+ * basándose en la queja, registra una violación a las reglas del consorcio. 
+ * Si alguna de las operaciones falla, la transacción se revierte.
+ * 
+ * Pasos:
+ * - Inserta un nuevo registro en la tabla `complaints`.
+ * - Inserta un registro correspondiente en la tabla `violations`.
+ * - Verifica si ambas inserciones fueron exitosas.
+ * - Si alguna falla, revierte la transacción.
+ */
 
 BEGIN;
 
@@ -112,7 +193,23 @@ ELSE
     COMMIT;
 END IF;
 
+-- #####################################################
 -- Contratación de un Servicio de Mantenimiento
+-- #####################################################
+
+/**
+ * Transacción: Contratación de un Servicio de Mantenimiento
+ * 
+ * Descripción:
+ * Esta transacción registra la contratación de un servicio de mantenimiento y actualiza 
+ * el fondo de reserva del consorcio. Si alguna operación falla, la transacción se revierte.
+ * 
+ * Pasos:
+ * - Inserta un nuevo registro de mantenimiento en la tabla `maintenance`.
+ * - Actualiza el fondo de reserva del condominio, restando el costo estimado del mantenimiento.
+ * - Verifica si ambas operaciones fueron exitosas.
+ * - Si alguna falla, revierte la transacción.
+ */
 
 BEGIN;
 
@@ -125,7 +222,7 @@ UPDATE condominiums
 SET reserve_fund = reserve_fund - 300.00
 WHERE condo_id = 2;
 
--- Verificar que ambos pasos fueron exitosos
+-- Verificar que ambos pasos fueron exitosos 
 IF ROW_COUNT() < 2 THEN
     ROLLBACK;
     SIGNAL SQLSTATE '45000'
