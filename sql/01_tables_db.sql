@@ -7,8 +7,20 @@ CREATE DATABASE consortium_db;
 -- Seleccionar la base de datos para usarla
 USE consortium_db;
 
--- Crear la tabla `administrators`
--- Esta tabla almacena información sobre los administradores responsables de la gestión de los consorcios.
+-- #####################################################
+-- Creación de Tablas con Validaciones y Documentación
+-- #####################################################
+
+/**
+ * Tabla: administrators
+ * 
+ * Descripción:
+ * Almacena información sobre los administradores responsables de la gestión de los consorcios.
+ * 
+ * Validaciones:
+ * - Se asegura que el nombre y apellido sean obligatorios.
+ * - Se permite un único identificador de administrador (admin_id).
+ */
 CREATE TABLE IF NOT EXISTS administrators (
     admin_id INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único del administrador
     first_name VARCHAR(255) NOT NULL,         -- Nombre del administrador
@@ -17,8 +29,18 @@ CREATE TABLE IF NOT EXISTS administrators (
     email VARCHAR(255)                        -- Correo electrónico del administrador
 );
 
--- Crear la tabla `condominiums`
--- Esta tabla contiene los detalles de cada condominio administrado, incluyendo nombre, dirección, y fondo de reserva.
+-- #####################################################
+
+/**
+ * Tabla: condominiums
+ * 
+ * Descripción:
+ * Contiene los detalles de cada condominio administrado, incluyendo nombre, dirección, y fondo de reserva.
+ * 
+ * Validaciones:
+ * - Se asegura que el nombre, dirección y fecha de creación del condominio sean obligatorios.
+ * - Incluye una clave foránea que referencia a la tabla `administrators`.
+ */
 CREATE TABLE IF NOT EXISTS condominiums (
     condo_id INT PRIMARY KEY AUTO_INCREMENT,      -- Identificador único del condominio
     condo_name VARCHAR(255) NOT NULL,             -- Nombre del condominio
@@ -34,8 +56,18 @@ CREATE TABLE IF NOT EXISTS condominiums (
     FOREIGN KEY (admin_id) REFERENCES administrators(admin_id)  -- Clave foránea que relaciona con la tabla `administrators`
 );
 
--- Crear la tabla `units`
--- Esta tabla almacena la información de las unidades dentro de los condominios.
+-- #####################################################
+
+/**
+ * Tabla: units
+ * 
+ * Descripción:
+ * Almacena la información de las unidades dentro de los condominios.
+ * 
+ * Validaciones:
+ * - Se asegura que el número de unidad, tipo, y referencia al condominio sean obligatorios.
+ * - Incluye claves foráneas que referencian a las tablas `condominiums` y `owners`.
+ */
 CREATE TABLE IF NOT EXISTS units (
     unit_id INT PRIMARY KEY AUTO_INCREMENT,      -- Identificador único de la unidad
     condo_id INT NOT NULL,                       -- Referencia al condominio al que pertenece la unidad (FK)
@@ -47,8 +79,17 @@ CREATE TABLE IF NOT EXISTS units (
     FOREIGN KEY (owner_id) REFERENCES owners(owner_id)         -- Clave foránea que relaciona con la tabla `owners`
 );
 
--- Crear la tabla `owners`
--- Esta tabla guarda la información de los propietarios de las unidades dentro de los condominios.
+-- #####################################################
+
+/**
+ * Tabla: owners
+ * 
+ * Descripción:
+ * Guarda la información de los propietarios de las unidades dentro de los condominios.
+ * 
+ * Validaciones:
+ * - Se asegura que el nombre y apellido del propietario sean obligatorios.
+ */
 CREATE TABLE IF NOT EXISTS owners (
     owner_id INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único del propietario
     first_name VARCHAR(255) NOT NULL,         -- Nombre del propietario
@@ -57,8 +98,18 @@ CREATE TABLE IF NOT EXISTS owners (
     email VARCHAR(255)                        -- Correo electrónico del propietario
 );
 
--- Crear la tabla `expenses`
--- Esta tabla almacena las expensas asociadas a cada unidad, incluyendo el monto y el estado de pago.
+-- #####################################################
+
+/**
+ * Tabla: expenses
+ * 
+ * Descripción:
+ * Almacena las expensas asociadas a cada unidad, incluyendo el monto y el estado de pago.
+ * 
+ * Validaciones:
+ * - Se asegura que la referencia a la unidad, el monto total y el estado de pago sean obligatorios.
+ * - Incluye una clave foránea que referencia a la tabla `units`.
+ */
 CREATE TABLE IF NOT EXISTS expenses (
     expense_id INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único de la expensa
     unit_id INT NOT NULL,                       -- Referencia a la unidad a la que corresponde la expensa (FK)
@@ -68,8 +119,18 @@ CREATE TABLE IF NOT EXISTS expenses (
     FOREIGN KEY (unit_id) REFERENCES units(unit_id)  -- Clave foránea que relaciona con la tabla `units`
 );
 
--- Crear la tabla `payments`
--- Esta tabla registra los pagos realizados por los propietarios para cubrir las expensas de sus unidades.
+-- #####################################################
+
+/**
+ * Tabla: payments
+ * 
+ * Descripción:
+ * Registra los pagos realizados por los propietarios para cubrir las expensas de sus unidades.
+ * 
+ * Validaciones:
+ * - Se asegura que la referencia a la expensa, la fecha de pago, el monto y el método de pago sean obligatorios.
+ * - Incluye una clave foránea que referencia a la tabla `expenses`.
+ */
 CREATE TABLE IF NOT EXISTS payments (
     payment_id INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único del pago
     expense_id INT NOT NULL,                    -- Referencia a la expensa relacionada con el pago (FK)
@@ -79,8 +140,18 @@ CREATE TABLE IF NOT EXISTS payments (
     FOREIGN KEY (expense_id) REFERENCES expenses(expense_id)  -- Clave foránea que relaciona con la tabla `expenses`
 );
 
--- Crear la tabla `common_expenses`
--- Esta tabla contiene los gastos comunes que se aplican a todo el condominio, como mantenimiento, servicios y reparaciones.
+-- #####################################################
+
+/**
+ * Tabla: common_expenses
+ * 
+ * Descripción:
+ * Contiene los gastos comunes que se aplican a todo el condominio, como mantenimiento, servicios y reparaciones.
+ * 
+ * Validaciones:
+ * - Se asegura que la referencia al condominio, la descripción, la fecha, el monto y la categoría del gasto sean obligatorios.
+ * - Incluye una clave foránea que referencia a la tabla `condominiums`.
+ */
 CREATE TABLE IF NOT EXISTS common_expenses (
     expense_id INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único del gasto común
     condo_id INT NOT NULL,                      -- Referencia al condominio al que corresponde el gasto común (FK)
@@ -91,8 +162,18 @@ CREATE TABLE IF NOT EXISTS common_expenses (
     FOREIGN KEY (condo_id) REFERENCES condominiums(condo_id)  -- Clave foránea que relaciona con la tabla `condominiums`
 );
 
--- Crear la tabla `common_expenses_audit`
--- Esta tabla de auditoría registra los cambios realizados en los gastos comunes, permitiendo un seguimiento detallado de las modificaciones.
+-- #####################################################
+
+/**
+ * Tabla: common_expenses_audit
+ * 
+ * Descripción:
+ * Esta tabla de auditoría registra los cambios realizados en los gastos comunes, permitiendo un seguimiento detallado de las modificaciones.
+ * 
+ * Validaciones:
+ * - Se asegura que la referencia al gasto común, la referencia al condominio, el monto anterior y el nuevo monto sean obligatorios.
+ * - Incluye claves foráneas que referencian a las tablas `common_expenses` y `condominiums`.
+ */
 CREATE TABLE IF NOT EXISTS common_expenses_audit (
     audit_id INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único del registro de auditoría
     expense_id INT,                           -- Referencia al gasto común que fue modificado (FK)
@@ -104,8 +185,18 @@ CREATE TABLE IF NOT EXISTS common_expenses_audit (
     FOREIGN KEY (condo_id) REFERENCES condominiums(condo_id)           -- Clave foránea que relaciona con la tabla `condominiums`
 );
 
--- Crear la tabla `maintenance`
--- Esta tabla almacena los detalles de los trabajos de mantenimiento programados para cada condominio.
+-- #####################################################
+
+/**
+ * Tabla: maintenance
+ * 
+ * Descripción:
+ * Almacena los detalles de los trabajos de mantenimiento programados para cada condominio.
+ * 
+ * Validaciones:
+ * - Se asegura que la referencia al condominio, la descripción, la fecha programada, el proveedor y el costo estimado sean obligatorios.
+ * - Incluye una clave foránea que referencia a la tabla `condominiums`.
+ */
 CREATE TABLE IF NOT EXISTS maintenance (
     maintenance_id INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único del trabajo de mantenimiento
     condo_id INT NOT NULL,                          -- Referencia al condominio al que pertenece el mantenimiento (FK)
@@ -116,8 +207,17 @@ CREATE TABLE IF NOT EXISTS maintenance (
     FOREIGN KEY (condo_id) REFERENCES condominiums(condo_id)  -- Clave foránea que relaciona con la tabla `condominiums`
 );
 
--- Crear la tabla `service_providers`
--- Esta tabla almacena la información de los proveedores de servicios de mantenimiento y otros servicios.
+-- #####################################################
+
+/**
+ * Tabla: service_providers
+ * 
+ * Descripción:
+ * Almacena la información de los proveedores de servicios de mantenimiento y otros servicios.
+ * 
+ * Validaciones:
+ * - Se asegura que el nombre, teléfono, correo electrónico y tipo de servicio sean obligatorios.
+ */
 CREATE TABLE IF NOT EXISTS service_providers (
     provider_id INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único del proveedor de servicios
     name VARCHAR(255) NOT NULL,                  -- Nombre del proveedor de servicios
@@ -126,8 +226,18 @@ CREATE TABLE IF NOT EXISTS service_providers (
     service_type VARCHAR(255) NOT NULL           -- Tipo de servicio proporcionado (e.g., Mantenimiento, Seguridad)
 );
 
--- Crear la tabla `meetings`
--- Esta tabla almacena la información sobre las reuniones de consorcio programadas para cada condominio.
+-- #####################################################
+
+/**
+ * Tabla: meetings
+ * 
+ * Descripción:
+ * Almacena la información sobre las reuniones de consorcio programadas para cada condominio.
+ * 
+ * Validaciones:
+ * - Se asegura que la referencia al condominio, la fecha de la reunión y la agenda sean obligatorias.
+ * - Incluye una clave foránea que referencia a la tabla `condominiums`.
+ */
 CREATE TABLE IF NOT EXISTS meetings (
     meeting_id INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único de la reunión
     condo_id INT NOT NULL,                      -- Referencia al condominio asociado a la reunión (FK)
@@ -137,8 +247,18 @@ CREATE TABLE IF NOT EXISTS meetings (
     FOREIGN KEY (condo_id) REFERENCES condominiums(condo_id)  -- Clave foránea que relaciona con la tabla `condominiums`
 );
 
--- Crear la tabla `violations`
--- Esta tabla almacena las violaciones a las reglas del consorcio cometidas por los propietarios o inquilinos.
+-- #####################################################
+
+/**
+ * Tabla: violations
+ * 
+ * Descripción:
+ * Almacena las violaciones a las reglas del consorcio cometidas por los propietarios o inquilinos.
+ * 
+ * Validaciones:
+ * - Se asegura que la referencia a la unidad, la descripción de la violación, la fecha y el estado sean obligatorios.
+ * - Incluye una clave foránea que referencia a la tabla `units`.
+ */
 CREATE TABLE IF NOT EXISTS violations (
     violation_id INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único de la violación
     unit_id INT NOT NULL,                         -- Referencia a la unidad relacionada con la violación (FK)
@@ -149,8 +269,18 @@ CREATE TABLE IF NOT EXISTS violations (
     FOREIGN KEY (unit_id) REFERENCES units(unit_id)  -- Clave foránea que relaciona con la tabla `units`
 );
 
--- Crear la tabla `complaints`
--- Esta tabla almacena las quejas presentadas por los propietarios o inquilinos en relación con el consorcio o la administración.
+-- #####################################################
+
+/**
+ * Tabla: complaints
+ * 
+ * Descripción:
+ * Almacena las quejas presentadas por los propietarios o inquilinos en relación con el consorcio o la administración.
+ * 
+ * Validaciones:
+ * - Se asegura que la referencia a la unidad, la descripción de la queja, la fecha de presentación y el estado sean obligatorios.
+ * - Incluye una clave foránea que referencia a la tabla `units`.
+ */
 CREATE TABLE IF NOT EXISTS complaints (
     complaint_id INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único de la queja
     unit_id INT NOT NULL,                         -- Referencia a la unidad desde donde se presentó la queja (FK)
@@ -160,8 +290,18 @@ CREATE TABLE IF NOT EXISTS complaints (
     FOREIGN KEY (unit_id) REFERENCES units(unit_id)  -- Clave foránea que relaciona con la tabla `units`
 );
 
--- Crear la tabla `events`
--- Esta tabla almacena los eventos comunitarios organizados en los condominios.
+-- #####################################################
+
+/**
+ * Tabla: events
+ * 
+ * Descripción:
+ * Almacena los eventos comunitarios organizados en los condominios.
+ * 
+ * Validaciones:
+ * - Se asegura que la referencia al condominio, el nombre del evento, la fecha y el organizador sean obligatorios.
+ * - Incluye una clave foránea que referencia a la tabla `condominiums`.
+ */
 CREATE TABLE IF NOT EXISTS events (
     event_id INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único del evento
     condo_id INT NOT NULL,                    -- Referencia al condominio donde se realizará el evento (FK)
@@ -172,8 +312,18 @@ CREATE TABLE IF NOT EXISTS events (
     FOREIGN KEY (condo_id) REFERENCES condominiums(condo_id)  -- Clave foránea que relaciona con la tabla `condominiums`
 );
 
--- Crear la tabla `emergency_contacts`
--- Esta tabla almacena los contactos de emergencia para cada condominio.
+-- #####################################################
+
+/**
+ * Tabla: emergency_contacts
+ * 
+ * Descripción:
+ * Almacena los contactos de emergencia para cada condominio.
+ * 
+ * Validaciones:
+ * - Se asegura que la referencia al condominio, el nombre del contacto, el teléfono y la relación con el consorcio sean obligatorios.
+ * - Incluye una clave foránea que referencia a la tabla `condominiums`.
+ */
 CREATE TABLE IF NOT EXISTS emergency_contacts (
     contact_id INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único del contacto de emergencia
     condo_id INT NOT NULL,                      -- Referencia al condominio al que pertenece el contacto (FK)
@@ -184,8 +334,18 @@ CREATE TABLE IF NOT EXISTS emergency_contacts (
     FOREIGN KEY (condo_id) REFERENCES condominiums(condo_id)  -- Clave foránea que relaciona con la tabla `condominiums`
 );
 
--- Crear la tabla `insurance_policies`
--- Esta tabla almacena la información de las pólizas de seguro asociadas a los condominios.
+-- #####################################################
+
+/**
+ * Tabla: insurance_policies
+ * 
+ * Descripción:
+ * Almacena la información de las pólizas de seguro asociadas a los condominios.
+ * 
+ * Validaciones:
+ * - Se asegura que la referencia al condominio, el nombre del proveedor, el número de la póliza, el monto de la cobertura y la fecha de vencimiento sean obligatorios.
+ * - Incluye una clave foránea que referencia a la tabla `condominiums`.
+ */
 CREATE TABLE IF NOT EXISTS insurance_policies (
     policy_id INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único de la póliza de seguro
     condo_id INT NOT NULL,                     -- Referencia al condominio cubierto por la póliza (FK)
